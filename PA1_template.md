@@ -3,7 +3,8 @@
 
 ## Loading and preprocessing the data
 
-```{r}
+
+```r
 step_data <- read.table("activity.csv", sep=",", header=TRUE)
 new_date <- as.Date(step_data$date, "%Y-%m-%d")
 new_interval <- sprintf("%04d", step_data$interval)
@@ -14,7 +15,8 @@ names(pa1_data)[2] <- "steps"
 
 ## What is mean total number of steps taken per day?
 
-```{r}
+
+```r
 step_data <- read.table("activity.csv", sep=",", header=TRUE)
 
 hist_df <- aggregate(step_data$steps, by=list(step_data$date), FUN = sum)
@@ -25,24 +27,40 @@ hist_df2 <- hist_df[complete.cases(hist_df), ]
 
 Create the histogram
 
-```{r}
+
+```r
 par(mfrow = c(1,1), bg = "white")
 
 hist(hist_df2$steps, col = "red", breaks = 20, main = "Total Number of Steps Taken Daily", xlab = "Steps")
 ```
 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
+
 Mean & Median: 
 
-```{r}
+
+```r
 mean(hist_df2$steps)
+```
+
+```
+## [1] 10766
+```
+
+```r
 median(hist_df2$steps)
+```
+
+```
+## [1] 10765
 ```
 
 
 
 ## What is the average daily activity pattern?
 
-``` {r}
+
+```r
 plot_df <- aggregate(step_data$steps, by=list(step_data$interval), FUN = mean, na.rm=TRUE)
 colnames(plot_df) <- c("interval", "steps")
 
@@ -51,23 +69,38 @@ plot_df$interval <- strptime(plot_df$interval, format="%H%M")
 ```
 
 Histogram
-``` {r}
+
+```r
 with(plot_df, plot(interval, steps, type = "l", 
     ylab = "Average Steps", xlab = "Time of Day"))
+```
 
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
+
+```r
 plot_df[which.max(plot_df$steps),1]
+```
+
+```
+## [1] "2014-07-20 08:35:00 PDT"
 ```
 
 ## Imputing missing values
 
 How many na rows: 
-``` {r}
+
+```r
 sum(is.na(step_data$steps))
+```
+
+```
+## [1] 2304
 ```
 
 Replace with averages
 
-``` {r}
+
+```r
 narm_df <- step_data
 narm_df$interval <- sprintf("%04d", narm_df$interval)
 
@@ -91,22 +124,38 @@ colnames(narm_df2) <- c("date", "steps")
 
 New histogram
 
-``` {r}
+
+```r
 hist(narm_df2$steps, col = "red", breaks = 20, main = "Total Number of Steps Taken Daily (NA replaced)", xlab = "Steps")
 ```
 
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
+
 Mean & Median:
 
-``` {r}
+
+```r
 mean(narm_df2$steps)
+```
+
+```
+## [1] 10766
+```
+
+```r
 median(narm_df2$steps)
+```
+
+```
+## [1] 10766
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
 create weekend/weekday data frame
 
-``` {r}
+
+```r
 weekdays_df <- weekdays(as.Date(step_data$date))
 
 i <- 1
@@ -127,11 +176,14 @@ colnames(agweek_df) <- c("interval", "weekday_df", "steps")
 
 draw charts:
 
-``` {r}
+
+```r
 par(mfrow = c(2,1), mar=c(3,3,2,1), bg="white")
 with(subset(agweek_df,weekday_df=="weekend"), plot(interval, steps, type="l", main = "weekend", ylab = "avg number of steps", xlab = "interval"))
 with(subset(agweek_df,weekday_df=="weekday"), plot(interval, steps, type="l", main = "weekday", ylab = "avg number of steps", xlab = "interval"))
 ```
+
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
 
 
 
